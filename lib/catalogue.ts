@@ -40,5 +40,6 @@ export function puddingLine(csvText: string, brand: string, product: string): Sh
   const shades = parseCsv(csvText)
     .filter((r) => r.brand === brand && r.product === product)
     .map((r, i) => ({ id: `row${i}`, name: "", hex: normalizeHex(r.hex) }));
-  return lightToDeep(shades).map((s, i) => ({ ...s, id: String(i + 1), name: `${product} #${i + 1}` }));
+  // Neutral names, so no brand name reaches a screenshot or the video.
+  return lightToDeep(shades).map((s, i) => ({ ...s, id: String(i + 1), name: `Shade ${i + 1}` }));
 }

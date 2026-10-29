@@ -1,0 +1,202 @@
+[
+  {
+    "id": "1",
+    "name": "Shade 1",
+    "hex": "#ffe3c2"
+  },
+  {
+    "id": "2",
+    "name": "Shade 2",
+    "hex": "#ffe0cd"
+  },
+  {
+    "id": "3",
+    "name": "Shade 3",
+    "hex": "#ffd3be"
+  },
+  {
+    "id": "4",
+    "name": "Shade 4",
+    "hex": "#fbd2ad"
+  },
+  {
+    "id": "5",
+    "name": "Shade 5",
+    "hex": "#f3cfb3"
+  },
+  {
+    "id": "6",
+    "name": "Shade 6",
+    "hex": "#edcfb9"
+  },
+  {
+    "id": "7",
+    "name": "Shade 7",
+    "hex": "#eabda6"
+  },
+  {
+    "id": "8",
+    "name": "Shade 8",
+    "hex": "#f0b996"
+  },
+  {
+    "id": "9",
+    "name": "Shade 9",
+    "hex": "#e1bba7"
+  },
+  {
+    "id": "10",
+    "name": "Shade 10",
+    "hex": "#e8ba8c"
+  },
+  {
+    "id": "11",
+    "name": "Shade 11",
+    "hex": "#f3b584"
+  },
+  {
+    "id": "12",
+    "name": "Shade 12",
+    "hex": "#e2b597"
+  },
+  {
+    "id": "13",
+    "name": "Shade 13",
+    "hex": "#e4b38e"
+  },
+  {
+    "id": "14",
+    "name": "Shade 14",
+    "hex": "#eab181"
+  },
+  {
+    "id": "15",
+    "name": "Shade 15",
+    "hex": "#e3b082"
+  },
+  {
+    "id": "16",
+    "name": "Shade 16",
+    "hex": "#e2aa7b"
+  },
+  {
+    "id": "17",
+    "name": "Shade 17",
+    "hex": "#d09e7c"
+  },
+  {
+    "id": "18",
+    "name": "Shade 18",
+    "hex": "#c1a07e"
+  },
+  {
+    "id": "19",
+    "name": "Shade 19",
+    "hex": "#d99358"
+  },
+  {
+    "id": "20",
+    "name": "Shade 20",
+    "hex": "#c7967d"
+  },
+  {
+    "id": "21",
+    "name": "Shade 21",
+    "hex": "#c09578"
+  },
+  {
+    "id": "22",
+    "name": "Shade 22",
+    "hex": "#bd9584"
+  },
+  {
+    "id": "23",
+    "name": "Shade 23",
+    "hex": "#b18b65"
+  },
+  {
+    "id": "24",
+    "name": "Shade 24",
+    "hex": "#b2856f"
+  },
+  {
+    "id": "25",
+    "name": "Shade 25",
+    "hex": "#c07746"
+  },
+  {
+    "id": "26",
+    "name": "Shade 26",
+    "hex": "#9d7359"
+  },
+  {
+    "id": "27",
+    "name": "Shade 27",
+    "hex": "#9c744f"
+  },
+  {
+    "id": "28",
+    "name": "Shade 28",
+    "hex": "#a86d40"
+  },
+  {
+    "id": "29",
+    "name": "Shade 29",
+    "hex": "#9d6f48"
+  },
+  {
+    "id": "30",
+    "name": "Shade 30",
+    "hex": "#7d5c4d"
+  },
+  {
+    "id": "31",
+    "name": "Shade 31",
+    "hex": "#7f5c3b"
+  },
+  {
+    "id": "32",
+    "name": "Shade 32",
+    "hex": "#84583f"
+  },
+  {
+    "id": "33",
+    "name": "Shade 33",
+    "hex": "#7d5631"
+  },
+  {
+    "id": "34",
+    "name": "Shade 34",
+    "hex": "#735642"
+  },
+  {
+    "id": "35",
+    "name": "Shade 35",
+    "hex": "#6b5041"
+  },
+  {
+    "id": "36",
+    "name": "Shade 36",
+    "hex": "#5e4638"
+  },
+  {
+    "id": "37",
+    "name": "Shade 37",
+    "hex": "#5c4433"
+  },
+  {
+    "id": "38",
+    "name": "Shade 38",
+    "hex": "#643c27"
+  },
+  {
+    "id": "39",
+    "name": "Shade 39",
+    "hex": "#5e3a23"
+  },
+  {
+    "id": "40",
+    "name": "Shade 40",
+    "hex": "#3f2018"
+  }
+]

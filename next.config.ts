@@ -1,10 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Fixtures are read from disk at request time, so ship them with the server functions.
+  outputFileTracingIncludes: { "/api/measure": ["./fixtures/youcam/**/*"] },
   turbopack: {
+    root: import.meta.dirname,
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],

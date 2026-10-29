@@ -45,3 +45,6 @@ next-env.d.ts
 
 # photos of people never leave this machine
 /data/photos/
+
+# local tool settings
+/.claude/
