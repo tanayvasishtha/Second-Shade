@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useState } from "react";
 import { hexToLab } from "@/lib/color";
 import type { Shade } from "@/lib/match";
 import type { MeasureResult, YouCamReading, YouCamReadings } from "@/lib/measure";
+import { nextTaps, TapImage, tapHint, type Tap } from "./tap-image";
 
-type Tap = { x: number; y: number };
 type Result = MeasureResult & { youcamMode?: string };
 
 const YOUCAM_CHOICES: { value: YouCamReadings; label: string }[] = [
@@ -60,14 +60,11 @@ export function MeasureFlow({ catalogue }: { catalogue: readonly Shade[] }) {
     setError(null);
   }
 
-  function onTap(e: MouseEvent<HTMLImageElement>) {
-    const box = e.currentTarget.getBoundingClientRect();
-    const tap = { x: (e.clientX - box.left) / box.width, y: (e.clientY - box.top) / box.height };
+  function onTap(tap: Tap) {
+    const next = nextTaps(stripe, skin, tap);
+    setStripe(next.stripe);
+    setSkin(next.skin);
     setResult(null);
-    if (!stripe || (stripe && skin)) {
-      setStripe(tap);
-      setSkin(null);
-    } else setSkin(tap);
   }
 
   async function submit() {
@@ -95,7 +92,6 @@ export function MeasureFlow({ catalogue }: { catalogue: readonly Shade[] }) {
     }
   }
 
-  const hint = !preview ? null : !stripe ? "Tap the middle of the stripe." : !skin ? "Now tap bare skin right next to it." : "Tap again to redo.";
   const ready = Boolean(file && stripe && skin && returnedId) && !busy;
 
   return (
@@ -135,27 +131,8 @@ export function MeasureFlow({ catalogue }: { catalogue: readonly Shade[] }) {
         />
         {preview && (
           <div className="flex flex-col gap-2">
-            <div className="relative overflow-hidden rounded-lg">
-              {/* eslint-disable-next-line @next/next/no-img-element -- a local blob preview, not a served asset */}
-              <img src={preview} alt="Your photo. Tap the stripe, then the bare skin." onClick={onTap} className="block h-auto w-full cursor-crosshair" />
-              {[
-                { t: stripe, label: "Stripe" },
-                { t: skin, label: "Skin" },
-              ].map(
-                ({ t, label }) =>
-                  t && (
-                    <div
-                      key={label}
-                      className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-                      style={{ left: `${t.x * 100}%`, top: `${t.y * 100}%` }}
-                    >
-                      <div className="h-6 w-6 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,0.6)]" />
-                      <span className="mt-1 rounded bg-black/70 px-1.5 text-xs text-white">{label}</span>
-                    </div>
-                  ),
-              )}
-            </div>
-            <p className="text-sm font-medium">{hint}</p>
+            <TapImage src={preview} alt="Your photo. Tap the stripe, then the bare skin." stripe={stripe} skin={skin} onTap={onTap} />
+            <p className="text-sm font-medium">{tapHint(stripe, skin)}</p>
           </div>
         )}
       </section>
