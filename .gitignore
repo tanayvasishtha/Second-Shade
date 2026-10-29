@@ -48,3 +48,6 @@ next-env.d.ts
 
 # local tool settings
 /.claude/
+
+# Try-on renders are photos of faces: keep them local unless the person agreed to publish
+/fixtures/youcam/makeup-vto/*.jpg

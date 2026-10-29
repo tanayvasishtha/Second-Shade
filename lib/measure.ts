@@ -108,7 +108,7 @@ function square(p: Point, px: Pixels) {
 const summary = (s: PatchStats): PatchSummary => ({ seenHex: linearToHex(s.mean), lightnessSd: s.lightnessSd, clippedShare: s.clippedShare });
 
 /** Rotated by EXIF, inside 1080 px, sRGB, as raw pixels plus the JPEG we would send to YouCam. */
-async function preparePhoto(photo: Uint8Array) {
+export async function preparePhoto(photo: Uint8Array) {
   const base = sharp(photo).rotate().resize({ width: 1080, height: 1080, fit: "inside", withoutEnlargement: true }).toColourspace("srgb");
   const { data, info } = await base.clone().removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const jpeg = await base.clone().jpeg({ quality: 95 }).toBuffer();

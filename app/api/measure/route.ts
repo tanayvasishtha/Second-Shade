@@ -1,10 +1,9 @@
 // POST /api/measure: a multipart form with the photo, the two taps and the returned shade.
 // The photo is processed in memory and never stored. Only colour numbers are kept.
 
-import path from "node:path";
 import { DEMO_CATALOGUE } from "@/lib/catalogues";
 import { measure, type YouCamReadings } from "@/lib/measure";
-import { createYouCamClient, modeFromEnv } from "@/lib/youcam/client";
+import { youcamFromEnv } from "@/lib/youcam/env";
 
 export const maxDuration = 60;
 
@@ -38,11 +37,7 @@ export async function POST(request: Request) {
 
   const asked = form.get("youcam");
   const readings: YouCamReadings = asked === "both" || asked === "corrected" ? asked : "none";
-  const reader = createYouCamClient({
-    apiKey: process.env.YOUCAM_API_KEY,
-    mode: modeFromEnv(),
-    fixturesDir: path.join(process.cwd(), "fixtures", "youcam"),
-  });
+  const reader = youcamFromEnv();
 
   const result = await measure({
     photo: new Uint8Array(await photo.arrayBuffer()),

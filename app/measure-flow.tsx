@@ -4,6 +4,7 @@ import { useState } from "react";
 import { hexToLab } from "@/lib/color";
 import type { Shade } from "@/lib/match";
 import type { MeasureResult, YouCamReading, YouCamReadings } from "@/lib/measure";
+import { CompareSlider } from "./compare-slider";
 import { nextTaps, TapImage, tapHint, type Tap } from "./tap-image";
 
 type Result = MeasureResult & { youcamMode?: string };
@@ -158,12 +159,63 @@ export function MeasureFlow({ catalogue }: { catalogue: readonly Shade[] }) {
         {error && <p className="text-sm text-red-700 dark:text-red-400">{error}</p>}
       </section>
 
-      {result && <ResultCard result={result} />}
+      {result && file && <ResultCard result={result} file={file} />}
     </div>
   );
 }
 
-function ResultCard({ result }: { result: Result }) {
+interface Render {
+  id: string;
+  src?: string;
+  error?: string;
+  taskId?: string;
+}
+
+function TryOn({ file, returned, recommended }: { file: File; returned: Shade; recommended: Shade }) {
+  const [state, setState] = useState<{ busy?: boolean; renders?: Render[]; error?: string }>({});
+
+  async function run() {
+    setState({ busy: true });
+    const form = new FormData();
+    form.set("photo", file);
+    form.set("shades", `${returned.id},${recommended.id}`);
+    try {
+      const res = await fetch("/api/render", { method: "POST", body: form });
+      const body = await res.json();
+      setState(res.ok ? { renders: body.renders } : { error: body.error });
+    } catch {
+      setState({ error: "Couldn't reach the server. Check your connection and try again." });
+    }
+  }
+
+  const [a, b] = state.renders ?? [];
+  const failed = state.renders?.find((r) => r.error);
+  return (
+    <div className="flex flex-col gap-2">
+      {!state.renders && (
+        <button type="button" onClick={run} disabled={state.busy} className="rounded-lg border border-black/20 px-4 py-3 font-medium disabled:opacity-40 dark:border-white/25">
+          {state.busy ? "Rendering both shades…" : "See both on your face"}
+        </button>
+      )}
+      {state.error && <p className="text-sm text-red-700 dark:text-red-400">{state.error}</p>}
+      {failed && (
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          {failed.error === "not_recorded"
+            ? "This try-on hasn't been recorded yet. It needs a YouCam key to render."
+            : `YouCam couldn't render it (${failed.error}).`}
+        </p>
+      )}
+      {a?.src && b?.src && (
+        <>
+          <CompareSlider left={a.src} right={b.src} leftLabel={returned.name} rightLabel={recommended.name} />
+          <p className="text-xs text-zinc-500">YouCam makeup try-on with smoothing off. Tasks {a.taskId} and {b.taskId}.</p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ResultCard({ result, file }: { result: Result; file: File }) {
   const { returned, recommended, estimate, gap, decision } = result;
 
   if (!result.ok)
@@ -207,6 +259,8 @@ function ResultCard({ result }: { result: Result }) {
         {estimate && <Swatch hex={estimate.hex} label="Your skin" sub="Measured" />}
         {recommended && decision !== "no_fit" && <Swatch hex={recommended.shade.hex} label={recommended.shade.name} sub={`ΔE ${recommended.dE.toFixed(2)}`} />}
       </div>
+
+      {decision === "exchange" && recommended && <TryOn file={file} returned={returned} recommended={recommended.shade} />}
 
       <div className="flex flex-col gap-2 sm:flex-row">
         {decision === "exchange" && recommended && (
