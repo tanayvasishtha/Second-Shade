@@ -7,12 +7,14 @@
 import { hexToLinear, linearToHex, linearToLab, linearToSrgb, srgbToLinear, type Lab, type Vec3 } from "./color";
 
 export const LIMITS = {
-  // Linear values below this are mostly sensor noise.
-  minLinear: 0.01,
+  // Patch means below this are mostly sensor noise. Kept low on purpose: deep skin under a warm
+  // bulb has a weak blue channel, and a higher floor would refuse exactly those shoppers.
+  minLinear: 0.004,
   // 0.98 in sRGB. Anything brighter is treated as clipped.
   maxLinear: srgbToLinear(0.98),
   // A gain outside this range means the stripe and the catalogue colour do not belong together,
-  // or the photo is far too dark or bright to trust.
+  // or the photo is far too dark or bright to trust. It cannot catch a wrong shade that differs
+  // mostly in depth, which looks like a change of exposure; in a real return the order names the shade.
   minGain: 0.2,
   maxGain: 5,
 } as const;

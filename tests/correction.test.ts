@@ -36,7 +36,7 @@ describe("estimateSkin", () => {
   });
 
   it("refuses a stripe too dark to measure", () => {
-    expect(channelGains([0.2, 0.1, 0.004], hexToLinear(STRIPE))).toMatchObject({ ok: false, reason: "stripe_too_dark" });
+    expect(channelGains([0.2, 0.1, 0.002], hexToLinear(STRIPE))).toMatchObject({ ok: false, reason: "stripe_too_dark" });
   });
 
   it("refuses a gain no real light would need", () => {
