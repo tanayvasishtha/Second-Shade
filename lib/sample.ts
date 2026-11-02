@@ -1,4 +1,4 @@
-// Robust mean colour of a rectangle of pixels: clipped pixels are dropped, then the darkest and
+// Trimmed mean colour of a rectangle of pixels: clipped pixels are dropped, then the darkest and
 // brightest share (shadow, shine) is trimmed before averaging in linear RGB.
 
 import { linearToLab, rgb8ToLinear, type Vec3 } from "./color";
