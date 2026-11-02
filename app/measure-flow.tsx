@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { hexToLab } from "@/lib/color";
-import type { Shade } from "@/lib/match";
+import { lightToDeep, type Shade } from "@/lib/match";
 import type { MeasureResult, YouCamReading, YouCamReadings } from "@/lib/measure";
 import { CompareSlider } from "./compare-slider";
 import { nextTaps, TapImage, tapHint, type Tap } from "./tap-image";
@@ -99,15 +99,15 @@ export function MeasureFlow({ catalogue }: { catalogue: readonly Shade[] }) {
     <div className="flex flex-col gap-8">
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">1. Which shade are you returning?</h2>
-        <div className="grid grid-cols-8 gap-1.5">
-          {catalogue.map((s) => (
+        <div className="grid grid-cols-6 gap-1.5">
+          {lightToDeep(catalogue).map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setReturnedId(s.id)}
               aria-label={s.name}
               aria-pressed={s.id === returnedId}
-              className={`aspect-square rounded-md border text-[10px] leading-none ${s.id === returnedId ? "ring-2 ring-offset-2 ring-zinc-900 dark:ring-zinc-100" : "border-black/10"}`}
+              className={`aspect-square rounded-md border text-xs leading-none ${s.id === returnedId ? "ring-2 ring-offset-2 ring-zinc-900 dark:ring-zinc-100" : "border-black/10"}`}
               style={{ background: s.hex, color: hexToLab(s.hex)[0] > 60 ? "rgba(0,0,0,0.65)" : "rgba(255,255,255,0.85)" }}
             >
               {s.id}

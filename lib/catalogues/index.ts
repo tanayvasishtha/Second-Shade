@@ -1,8 +1,12 @@
 import type { Shade } from "../match";
-import fitMe2018 from "./fit-me-2018.json";
+import storeRange from "./store-range.json";
 
-/** Stand-in until the current range is sampled with shade names and checked against bought bottles (E4). */
-export const DEMO_CATALOGUE: readonly Shade[] = fitMe2018;
+/**
+ * The demo store's range: 18 shades of a drugstore liquid foundation sold in India, with the swatch
+ * colours the brand's own Indian website publishes for each shade (read 2 Nov 2026). These are the
+ * brand's display colours, not lab measurements, and were not checked against bottles.
+ * Shades go by number only, so no brand name reaches a screenshot or the video.
+ */
+export const DEMO_CATALOGUE: readonly Shade[] = storeRange;
 
-export const DEMO_CATALOGUE_SOURCE =
-  "40 swatch colours of one drugstore range from The Pudding's makeup-shades data (May 2018), numbered light to deep.";
+export const DEMO_CATALOGUE_SOURCE = "18 shades with the swatch colours their brand publishes, shown by shade number.";

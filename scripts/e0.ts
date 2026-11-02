@@ -8,11 +8,11 @@
 //
 // Each photo costs 20 units. Readings are saved as fixtures, so a rerun costs nothing.
 
-import { readdir, readFile, mkdir, writeFile } from "node:fs/promises";
+import { readdir, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { ciede2000, hexToLab, type Lab } from "../lib/color";
-import { puddingLine } from "../lib/catalogue";
+import { DEMO_CATALOGUE } from "../lib/catalogues";
 import { rankShades } from "../lib/match";
 import { createYouCamClient, FixtureMissingError, modeFromEnv, UNITS, YouCamError, type Image } from "../lib/youcam/client";
 
@@ -31,7 +31,7 @@ interface Reading {
   file: string;
   hex?: string;
   lab?: Lab;
-  fitMe?: string;
+  shade?: string;
   error?: string;
   source?: string;
   ms?: number;
@@ -90,7 +90,7 @@ async function main() {
     fixturesDir: path.join(ROOT, "fixtures", "youcam"),
     log: (line) => console.log(`  ${line}`),
   });
-  const fitMe = puddingLine(await readFile(path.join(ROOT, "research", "data", "shades.csv"), "utf8"), "Maybelline", "Fit Me");
+  const range = DEMO_CATALOGUE;
 
   const readings: Reading[] = [];
   const missing: string[] = [];
@@ -102,7 +102,7 @@ async function main() {
       const out = await client.skinTone(image);
       r.hex = out.skinColor;
       r.lab = hexToLab(out.skinColor);
-      r.fitMe = rankShades(r.lab, fitMe)[0].shade.id;
+      r.shade = rankShades(r.lab, range)[0].shade.id;
       r.source = out.task.source;
       r.ms = out.task.ms;
     } catch (e) {
@@ -127,9 +127,9 @@ async function main() {
     repeatNoise = ciede2000(first.lab, hexToLab(again.skinColor));
   }
 
-  const ok = readings.filter((r): r is Reading & { lab: Lab; hex: string; fitMe: string } => Boolean(r.lab));
+  const ok = readings.filter((r): r is Reading & { lab: Lab; hex: string; shade: string } => Boolean(r.lab));
   const spread = maxPairwise(ok.map((r) => r.lab));
-  const picks = new Set(ok.map((r) => r.fitMe));
+  const picks = new Set(ok.map((r) => r.shade));
 
   let verdict: string;
   if (ok.length < 2) verdict = "Not enough readings to compare. Fix the rejected photos and run again.";
@@ -138,18 +138,18 @@ async function main() {
   else if (spread < NEIGHBOUR_GAP && picks.size === 1)
     verdict = `Stable: the reading moved ${spread.toFixed(2)} across lights, under the ${NEIGHBOUR_GAP} gap between neighbouring shades, and every light picks the same shade. Apply the fallback in IDEA.md: drop the stripe.`;
   else
-    verdict = `Moves: the reading changed by up to ${spread.toFixed(2)} across lights (${(spread / NEIGHBOUR_GAP).toFixed(1)} times the ${NEIGHBOUR_GAP} gap between neighbouring shades) and picked ${picks.size} different Fit Me shades. The stripe has room to help. Go to E1.`;
+    verdict = `Moves: the reading changed by up to ${spread.toFixed(2)} across lights (${(spread / NEIGHBOUR_GAP).toFixed(1)} times the ${NEIGHBOUR_GAP} gap between neighbouring shades) and picked ${picks.size} different shades. The stripe has room to help. Go to E1.`;
 
   const lines = [
     "# E0: YouCam skin tone across lights",
     "",
-    `Run ${new Date().toISOString()}. ${ok.length} of ${readings.length} photos read. Positions are in Maybelline Fit Me, 40 shades from The Pudding's 2018 swatch data, numbered light to deep.`,
+    `Run ${new Date().toISOString()}. ${ok.length} of ${readings.length} photos read. Nearest shade is from the demo range of ${range.length} shades.`,
     "",
-    "| Light | YouCam skin_color | L* | a* | b* | Nearest Fit Me | dE00 to first | Embedded colour profile |",
+    "| Light | YouCam skin_color | L* | a* | b* | Nearest shade | dE00 to first | Embedded colour profile |",
     "|---|---|---|---|---|---|---|---|",
     ...readings.map((r) =>
       r.lab
-        ? `| ${r.label} | ${r.hex} | ${r.lab[0].toFixed(1)} | ${r.lab[1].toFixed(1)} | ${r.lab[2].toFixed(1)} | #${r.fitMe} of 40 | ${ciede2000(ok[0].lab, r.lab).toFixed(2)} | ${r.colourProfile ? "yes" : "no"} |`
+        ? `| ${r.label} | ${r.hex} | ${r.lab[0].toFixed(1)} | ${r.lab[1].toFixed(1)} | ${r.lab[2].toFixed(1)} | Shade ${r.shade} | ${ciede2000(ok[0].lab, r.lab).toFixed(2)} | ${r.colourProfile ? "yes" : "no"} |`
         : `| ${r.label} | rejected: ${r.error} | | | | | | ${r.colourProfile ? "yes" : "no"} |`,
     ),
     "",
