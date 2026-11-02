@@ -78,6 +78,21 @@ describe("youcam client", () => {
     expect([a.skinColor, b.skinColor]).toEqual(["#aa8866", "#ab8967"]);
   });
 
+  it("still returns a paid-for answer when the fixture cannot be saved", async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), "youcam-"));
+    const blocked = path.join(dir, "file-not-dir");
+    await import("node:fs/promises").then((fs) => fs.writeFile(blocked, "x"));
+    const net = fakeFetch([
+      ...uploadReplies(),
+      { json: { data: { task_id: "t" } } },
+      { json: { data: { task_status: "success", results: { color: { skin_color: "#aa8866" } } } } },
+    ]);
+    const client = createYouCamClient({ apiKey: "k", mode: "record", fixturesDir: blocked, fetch: net.fetch, pollMs: 0 });
+    const out = await client.skinTone(image);
+    expect(out.skinColor).toBe("#aa8866");
+    expect(out.task.source).toBe("api");
+  });
+
   it("fails clearly in replay mode when nothing was recorded", async () => {
     const dir = await mkdtemp(path.join(tmpdir(), "youcam-"));
     const client = createYouCamClient({ mode: "replay", fixturesDir: dir });

@@ -192,18 +192,25 @@ export function createYouCamClient(opts: ClientOptions) {
     log(`${feature} ${taskId} ${ms} ms, ${UNITS[feature]} units`);
 
     if (opts.mode === "record") {
-      await mkdir(path.dirname(file), { recursive: true });
-      const url = (results as { url?: unknown } | undefined)?.url;
-      if (typeof url === "string") {
-        // Result URLs expire, so keep the image itself.
-        const img = await doFetch(url);
-        if (img.ok) {
-          const name = `${key}.jpg`;
-          await writeFile(path.join(path.dirname(file), name), new Uint8Array(await img.arrayBuffer()));
-          record.resultImage = `${feature}/${name}`;
+      // Best effort: on a read-only host (a deployed server) the task has already been paid for,
+      // so a failed save must not turn a good answer into an error.
+      try {
+        await mkdir(path.dirname(file), { recursive: true });
+        const url = (results as { url?: unknown } | undefined)?.url;
+        if (typeof url === "string") {
+          // Result URLs expire, so keep the image itself.
+          const img = await doFetch(url);
+          if (img.ok) {
+            const name = `${key}.jpg`;
+            await writeFile(path.join(path.dirname(file), name), new Uint8Array(await img.arrayBuffer()));
+            record.resultImage = `${feature}/${name}`;
+          }
         }
+        await writeFile(file, JSON.stringify(record, null, 2) + "\n");
+      } catch (e) {
+        delete record.resultImage;
+        log(`could not save fixture ${key}: ${(e as Error).message}`);
       }
-      await writeFile(file, JSON.stringify(record, null, 2) + "\n");
     }
     return { ...record, source: "api" };
   }
